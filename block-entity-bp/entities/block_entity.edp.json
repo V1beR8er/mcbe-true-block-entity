@@ -8,34 +8,6 @@
             "runtime_identifier": "minecraft:sulfur_cube"
         },
         "components": {
-            "minecraft:projectile": {
-                "anchor": "origin",
-                "angle_offset": 0,
-                "gravity": 0.05,
-                "inertia": 0.99,
-                "is_dangerous": false,
-                "lightning": false,
-                "liquid_inertia": 0.6,
-                "multiple_targets": true,
-                "on_fire_time": 5,
-                "power": 1,
-                "ignored_entities": [
-                    "viberater:block_entity"
-                ],
-                "on_hit": {
-                    "impact_damage": {
-                        "knockback": true,
-                        "power_multiplier": 1,
-                        "damage": {
-                            "min": 1
-                        }
-                    },
-                    "stick_in_ground": {}
-                },
-                "reflect_on_hurt": true,
-                "uncertainty_base": 0,
-                "uncertainty_multiplier": 0
-            },
             "minecraft:inventory": {
                 "can_be_siphoned_from": false,
                 "container_type": "container",
@@ -135,6 +107,37 @@
             }
         },
         "component_groups": {
+            "viberater:projcomp": {
+                "minecraft:projectile": {
+                    "anchor": "origin",
+                    "angle_offset": 0,
+                    "gravity": 0.05,
+                    "inertia": 0.99,
+                    "is_dangerous": true,
+                    "liquid_inertia": 0.6,
+                    "multiple_targets": false,
+                    "on_fire_time": 5,
+                    "power": 1,
+                    "on_hit": {
+                        "impact_damage": {
+                            "knockback": true,
+                            "power_multiplier": 1,
+                            "damage": {
+                                "min": 1
+                            }
+                        },
+                        "definition_event": {
+                            "affect_projectile": true,
+                            "event_trigger": {
+                                "event": "viberater:remove_projcomp"
+                            }
+                        }
+                    },
+                    "reflect_on_hurt": true,
+                    "uncertainty_base": 0,
+                    "uncertainty_multiplier": 0
+                }
+            },
             "instant_despawn": {
                 "minecraft:instant_despawn": {}
             },
@@ -148,10 +151,24 @@
             }
         },
         "events": {
+            "minecraft:entity_spawned": {
+                "add": {
+                    "component_groups": [
+                        "viberater:projcomp"
+                    ]
+                }
+            },
             "instant_despawn": {
                 "add": {
                     "component_groups": [
                         "instant_despawn"
+                    ]
+                }
+            },
+            "viberater:remove_projcomp": {
+                "remove": {
+                    "component_groups": [
+                        "viberater:projcomp"
                     ]
                 }
             },
