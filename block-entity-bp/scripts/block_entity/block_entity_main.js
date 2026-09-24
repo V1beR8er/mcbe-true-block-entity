@@ -35,7 +35,7 @@ export function createBlockEntity(b, initialVelocity) {
 
 /** @param {import('@minecraft/server').Entity} e */
 export function reduceBlockEntity(e) {
-    if (!e?.isValid || !e?.dimension) return
+    if (!e?.isValid || !e?.dimension || e.typeId != "viberater:block_entity") return
     const perms = JSON.parse(e.getDynamicProperty("block_permutations"))
     try {
         const hb = perms["head_piece_bit"]
