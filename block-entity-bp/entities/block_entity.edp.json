@@ -1,0 +1,139 @@
+{
+    "format_version": "1.26.50",
+    "minecraft:entity": {
+        "description": {
+            "identifier": "viberater:block_entity",
+            "is_spawnable": true,
+            "is_summonable": true,
+            "runtime_identifier": "minecraft:sulfur_cube"
+        },
+        "components": {
+            "minecraft:inventory": {
+                "can_be_siphoned_from": false,
+                "container_type": "container",
+                "inventory_size": 27,
+                "restrict_to_owner": true
+            },
+            "minecraft:pushable_by_entity": {
+                "presets": [
+                    {
+                        "filters": {
+                            "any_of": [
+                                {
+                                    "test": "is_family",
+                                    "subject": "other",
+                                    "value": "player"
+                                },
+                                {
+                                    "test": "is_controlling_passenger_family",
+                                    "subject": "other",
+                                    "value": "player"
+                                }
+                            ]
+                        },
+                        "push_mode": "ball",
+                        "min_distance": 0.0,
+                        "max_distance": 1.0,
+                        "require_collision_overlap": false,
+                        "push_scale_self": 2.0,
+                        "push_scale_other": 1.0,
+                        "kick_speed_scale": 0.3,
+                        "min_kick_speed": 0.0,
+                        "max_kick_speed": 0.5,
+                        "vertical_kick_multiplier": 0.3,
+                        "play_sound": true,
+                        "play_sound_impulse_threshold": 0.1,
+                        "play_sound_cooldown_in_seconds": 0.7
+                    }
+                ]
+            },
+            "minecraft:bounciness": {
+                "value": 0.5
+            },
+            "minecraft:friction_modifier": {
+                "value": 0.3
+            },
+            "minecraft:air_drag_modifier": {
+                "value": 0.1
+            },
+            "minecraft:collision_box": {
+                "width": 0.98,
+                "height": 0.98
+            },
+            "minecraft:rotation_axis_aligned": {},
+            "minecraft:body_rotation_blocked": {},
+            "minecraft:damage_sensor": {
+                "triggers": [
+                    {
+                        "cause": "all",
+                        "deals_damage": "no_but_entity_effects_apply"
+                    }
+                ]
+            },
+            "minecraft:is_hidden_when_invisible": {},
+            "minecraft:renders_when_invisible": {},
+            "minecraft:type_family": {
+                "family": [
+                    "inanimate",
+                    "block",
+                    "custom"
+                ]
+            },
+            "minecraft:physics": {
+                "has_collision": false,
+                "push_towards_closest_space": false
+            },
+            "minecraft:conditional_bandwidth_optimization": {},
+            "minecraft:equipment": {
+                "slot_drop_chance": [
+                    {
+                        "slot": "slot.weapon.mainhand",
+                        "drop_chance": 1.0
+                    }
+                ]
+            },
+            "minecraft:environment_sensor": {
+                "triggers": [
+                    {
+                        "event": "viberater:reduce_block_entity",
+                        "target": "self",
+                        "filters": {
+                            "test": "on_ground",
+                            "subject": "self",
+                            "value": true
+                        }
+                    }
+                ]
+            }
+        },
+        "component_groups": {
+            "instant_despawn": {
+                "minecraft:instant_despawn": {}
+            },
+            "viberater:physics": {
+                "minecraft:physics": {
+                    "has_collision": true,
+                    "push_towards_closest_space": true
+                },
+                "minecraft:pushable_by_block": {}
+            }
+        },
+        "events": {
+            "instant_despawn": {
+                "add": {
+                    "component_groups": [
+                        "instant_despawn"
+                    ]
+                }
+            },
+            "viberater:physics":{
+                "add": {
+                    "component_groups": [
+                        "viberater:physics"
+                    ]
+                }
+            },
+            "viberater:reduce_block_entity": {}
+        }
+    }
+}
