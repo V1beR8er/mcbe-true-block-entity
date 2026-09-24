@@ -31,6 +31,8 @@ there is also a commented out function where it will turn the block that a playe
 
 Ideas and known issues:
 
+Im thinking of maybe making it a projectile. In that way, say I have a boss smash a wall and the player is on the other side. the projectile can then smack the player backward and deal damage. Could be fire hold on.
+
 Beds will not retain their color.
 
 I believe an algorithm for all custom multiblocks is possible, but I am not going to be the one to do it. What you can do is distinguish between horizontal and vertical, then both get and place blocks according to the saved permutation data, just as is done with doors and beds.
