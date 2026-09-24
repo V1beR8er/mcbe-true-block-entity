@@ -4,7 +4,7 @@ This simple MCBE addon exposes an easy way for you to turn any block into an ent
 
 Its still under development. Credit where credit is due. 
 
-Here's what it does.
+Here's what it does. This is probably going to be outdated by the time you read it.
 
 There is a very simple entity with the identifier "viberater:block_entity". I will refer to it as the block entity.
 It cannot rotate, and has bounciness and friction, and has 27 inventory slots
@@ -28,14 +28,3 @@ There exists special placement for beds, doors, and shulker boxes.
 After, it disappears.
 
 there is also a commented out function where it will turn the block that a player who begins sneaking is looking at into a block entity and shoot it straight up. use this to test it out if you so please.
-
-Ideas and known issues:
-
-Im thinking of maybe making it a projectile. In that way, say I have a boss smash a wall and the player is on the other side. the projectile can then smack the player backward and deal damage. Could be fire hold on.
-
-Beds will not retain their color.
-
-I believe an algorithm for all custom multiblocks is possible, but I am not going to be the one to do it. What you can do is distinguish between horizontal and vertical, then both get and place blocks according to the saved permutation data, just as is done with doors and beds.
-
-If you make it so that the reduceBlockEntity() fails if the inputted block entity still has a velocity < 0.05,
-then you can make it so that it only turns back into a block when it has stopped moving completely.
