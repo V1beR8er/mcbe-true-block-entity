@@ -1,7 +1,7 @@
 {
     "format_version": 2,
     "header": {
-        "name": "Mahoraga BP v1",
+        "name": "Block Entity BP v1",
         "description": "V1beR8er",
         "uuid": "6ccdda0f-5c04-4c1d-9d07-6b4d574186d8",
         "version": [
@@ -41,14 +41,6 @@
         {
             "module_name": "@minecraft/server",
             "version": "2.11.0-beta"
-        },
-        {
-            "module_name": "@minecraft/server-ui",
-            "version": "2.3.0-beta"
-        },
-        {
-            "module_name": "@minecraft/debug-utilities",
-            "version": "1.0.0-beta"
         },
         {
             "uuid": "84999398-ba70-4cb1-9cba-676d9b3d678d",
