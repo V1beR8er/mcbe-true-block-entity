@@ -1,6 +1,14 @@
 import { world, BlockPermutation, ItemStack } from "@minecraft/server"
 
-/*world.afterEvents.entityStartSneaking.subscribe(data => {
+const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "fertilize_area"]
+const replaceableBlacklist = ["minecraft:grass_block", "minecraft:moss_block"]
+const replaceableWhitelist = ["minecraft:deadbush", "minecraft:air", "minecraft:vine"]
+
+/*world.afterEvents.entityHurt.subscribe( data => {
+    world.sendMessage(`dmg ${data.damage}`)
+})
+
+world.afterEvents.entityStartSneaking.subscribe(data => {
     const p = data.entity
     const b = p.getBlockFromViewDirection().block
     createBlockEntity(b, { x: 0, y: 1, z: 0 })
@@ -37,6 +45,8 @@ export function createBlockEntity(b, initialVelocity) {
 /** @param {import('@minecraft/server').Entity} e */
 export function reduceBlockEntity(e) {
     if (!e?.isValid || !e?.dimension || e.typeId != "viberater:block_entity") return
+    const v = e.getVelocity()
+    if (Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2) > 0.005) return
     const perms = JSON.parse(e.getDynamicProperty("block_permutations"))
     try {
         const hb = perms["head_piece_bit"]
@@ -102,38 +112,38 @@ function setBlockPermutation(e, perms, eloc = e.location, check = true) {
     world.sendMessage(`${perms["head_piece_bit"]}`)
     world.sendMessage(`${eloc.x} ${eloc.y} ${eloc.z}`)
     const b = e.dimension.getBlock(eloc)
-    if (b.typeId == "minecraft:air") {
+    if (isReplaceable(b)) {
         e.dimension.setBlockPermutation(eloc, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return eloc
     }
     if (!check) return
     let bb = b.below()
-    if (bb.typeId == "minecraft:air") {
+    if (isReplaceable(bb)) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
     bb = b.above()
-    if (bb.typeId == "minecraft:air") {
+    if (isReplaceable(bb)) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
     bb = b.north()
-    if (bb.typeId == "minecraft:air") {
+    if (isReplaceable(bb)) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
     bb = b.east()
-    if (bb.typeId == "minecraft:air") {
+    if (isReplaceable(bb)) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
     bb = b.south()
-    if (bb.typeId == "minecraft:air") {
+    if (isReplaceable(bb)) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
     bb = b.west()
-    if (bb.typeId == "minecraft:air") {
+    if (isReplaceable(bb)) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
@@ -141,12 +151,13 @@ function setBlockPermutation(e, perms, eloc = e.location, check = true) {
     return
 }
 
-function vec3Add(vec1, vec2) {
-    return {
-        x: vec1.x + vec2.x,
-        y: vec1.y + vec2.y,
-        z: vec1.z + vec2.z
-    }
+/** @param {import('@minecraft/server').Block} b */
+function isReplaceable(b) {
+    const t = b.getTags()
+    if (replaceableBlacklist.includes(b.typeId)) return false
+    if (replaceableWhitelist.includes(b.typeId)) return true
+    if (t.some(tag => {return replaceableBlockTags.includes(tag)})) return true
+    return false
 }
 
 world.afterEvents.dataDrivenEntityTrigger.subscribe(data => {
