@@ -1,10 +1,10 @@
 import { world, BlockPermutation } from "@minecraft/server"
 
-world.afterEvents.entityStartSneaking.subscribe( data => {
+/*world.afterEvents.entityStartSneaking.subscribe( data => {
     const p = data.entity
     const b = p.getBlockFromViewDirection().block
     createBlockEntity(b, {x: 0, y:1, z: 0})
-}, {"entityFilter": {"families": ["player"]}})
+}, {"entityFilter": {"families": ["player"]}})*/
 
 /**  @param {import('@minecraft/server').Block} b @param {{x: Number, y: Number, z: Number}} initialVelocity */  
 export function createBlockEntity(b, initialVelocity) {
