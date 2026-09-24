@@ -4,15 +4,16 @@ const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "fertilize_area
 const replaceableBlacklist = ["minecraft:grass_block", "minecraft:moss_block"]
 const replaceableWhitelist = ["minecraft:deadbush", "minecraft:air", "minecraft:vine"]
 
-/*world.afterEvents.entityHurt.subscribe( data => {
+world.afterEvents.entityHurt.subscribe( data => {
     world.sendMessage(`dmg ${data.damage}`)
 })
+
 
 world.afterEvents.entityStartSneaking.subscribe(data => {
     const p = data.entity
     const b = p.getBlockFromViewDirection().block
     createBlockEntity(b, { x: 0, y: 1, z: 0 })
-}, { "entityFilter": { "families": ["player"] } })*/
+}, { "entityFilter": { "families": ["player"] } })
 
 /**  @param {import('@minecraft/server').Block} b @param {{x: Number, y: Number, z: Number}} initialVelocity */
 export function createBlockEntity(b, initialVelocity) {
@@ -24,7 +25,7 @@ export function createBlockEntity(b, initialVelocity) {
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
     try {
         e.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${b.typeId}`)
-    } catch { return }
+    } catch { }
     if (b.typeId.includes("shulker_box")) {
         const cntr = b.getComponent("inventory")?.container
         const ecntr = e.getComponent("inventory")?.container
