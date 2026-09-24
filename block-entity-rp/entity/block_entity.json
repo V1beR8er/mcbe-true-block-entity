@@ -1,0 +1,21 @@
+{
+    "format_version": "1.26.0",
+    "minecraft:client_entity": {
+        "description": {
+            "identifier": "viberater:block_entity",
+            "materials": {
+                "default": "sulfur_cube"
+            },
+            "textures": {
+                "default": "textures/invisible"
+            },
+            "geometry": {
+                "default": "geometry.block_entity"
+            },
+            "render_controllers": [
+                "controller.render.block_entity"
+            ],
+            "held_item_scale": 2.678
+        }
+    }
+}
