@@ -1,6 +1,6 @@
 What's good gang.
 
-This simple MCBE addon exposes an easy way for you to turn any block into an entity via scripts.
+This simple MCBE addon exposes an easy way for you to turn any block into an entity via scripts. This is intended to be as lightweight as possible.
 
 Its still under development. Credit where credit is due. 
 
