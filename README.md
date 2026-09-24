@@ -27,6 +27,8 @@ It will try to set the permutation of the block at the block entity's location. 
 There exists special placement for beds, doors, and shulker boxes.
 After, it disappears.
 
+there is also a commented out function where it will turn the block that a player who begins sneaking is looking at into a block entity and shoot it straight up. use this to test it out if you so please.
+
 Ideas:
 
 If you make it so that the reduceBlockEntity() fails if the inputted block entity still has a velocity < 0.05,
