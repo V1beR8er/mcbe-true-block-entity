@@ -19,6 +19,9 @@
                 "multiple_targets": true,
                 "on_fire_time": 5,
                 "power": 1,
+                "ignored_entities": [
+                    "viberater:block_entity"
+                ],
                 "on_hit": {
                     "impact_damage": {
                         "knockback": true,
@@ -29,7 +32,7 @@
                     },
                     "stick_in_ground": {}
                 },
-                "reflect_on_hurt": false,
+                "reflect_on_hurt": true,
                 "uncertainty_base": 0,
                 "uncertainty_multiplier": 0
             },
@@ -140,7 +143,8 @@
                     "has_collision": true,
                     "push_towards_closest_space": true
                 },
-                "minecraft:pushable_by_block": {}
+                "minecraft:pushable_by_block": {},
+                "minecraft:pushable_by_entity": {}
             }
         },
         "events": {
