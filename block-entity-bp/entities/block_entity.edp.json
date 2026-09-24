@@ -8,6 +8,31 @@
             "runtime_identifier": "minecraft:sulfur_cube"
         },
         "components": {
+            "minecraft:projectile": {
+                "anchor": "origin",
+                "angle_offset": 0,
+                "gravity": 0.05,
+                "inertia": 0.99,
+                "is_dangerous": false,
+                "lightning": false,
+                "liquid_inertia": 0.6,
+                "multiple_targets": true,
+                "on_fire_time": 5,
+                "power": 1,
+                "on_hit": {
+                    "impact_damage": {
+                        "knockback": true,
+                        "power_multiplier": 1,
+                        "damage": {
+                            "min": 1
+                        }
+                    },
+                    "stick_in_ground": {}
+                },
+                "reflect_on_hurt": false,
+                "uncertainty_base": 0,
+                "uncertainty_multiplier": 0
+            },
             "minecraft:inventory": {
                 "can_be_siphoned_from": false,
                 "container_type": "container",
@@ -80,7 +105,7 @@
                 ]
             },
             "minecraft:physics": {
-                "has_collision": false,
+                "has_collision": true,
                 "push_towards_closest_space": false
             },
             "minecraft:conditional_bandwidth_optimization": {},
