@@ -29,7 +29,11 @@ After, it disappears.
 
 there is also a commented out function where it will turn the block that a player who begins sneaking is looking at into a block entity and shoot it straight up. use this to test it out if you so please.
 
-Ideas:
+Ideas and known issues:
+
+Beds will not retain their color.
+
+I believe an algorithm for all custom multiblocks is possible, but I am not going to be the one to do it. What you can do is distinguish between horizontal and vertical, then both get and place blocks according to the saved permutation data, just as is done with doors and beds.
 
 If you make it so that the reduceBlockEntity() fails if the inputted block entity still has a velocity < 0.05,
 then you can make it so that it only turns back into a block when it has stopped moving completely.
