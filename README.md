@@ -1,4 +1,4 @@
-What's good gang.
+What's good gang. I don't use github often. Lmk how I can do this better.
 
 This simple MCBE addon exposes an easy way for you to turn any block into an entity via scripts. This is intended to be as lightweight as possible.
 
