@@ -23,6 +23,12 @@ export function createBlockEntity(b, initialVelocity) {
     e.setDynamicProperty("block_type", b.typeId)
     const perms = b.permutation.getAllStates()
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
+    const sign = b.getComponent("sign")
+    if (sign) {
+        world.sendMessage(`has sign`)
+        e.setDynamicProperty("block_sign_front", sign.getText("Front"))
+        e.setDynamicProperty("block_sign_back", sign.getText("Back"))
+    }
     try {
         e.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${b.typeId}`)
     } catch { }
@@ -96,8 +102,12 @@ export function reduceBlockEntity(e) {
             }
         }
     } catch { }
-
     const b = e.dimension.getBlock(e.location)
+    if (e.getDynamicProperty('block_sign_front')) {
+        world.sendMessage(`do sign`)
+        b.getComponent("sign").setText(e.getDynamicProperty("block_sign_front"), "Front")
+        b.getComponent("sign").setText(e.getDynamicProperty("block_sign_back"), "Back")
+    }
     if (b.typeId.includes("shulker_box")) {
         const cntr = b.getComponent("inventory")?.container
         const ecntr = e.getComponent("inventory")?.container
@@ -148,7 +158,6 @@ function setBlockPermutation(e, perms, eloc = e.location, check = true) {
         bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
         return bb.location
     }
-    world.sendMessage(`total fail`)
     return
 }
 
