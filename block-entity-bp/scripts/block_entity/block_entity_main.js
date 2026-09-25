@@ -8,7 +8,6 @@ const replaceableWhitelist = ["minecraft:deadbush", "minecraft:lava", "minecraft
     world.sendMessage(`dmg ${data.damage}`)
 })
 
-
 world.afterEvents.entityStartSneaking.subscribe(data => {
     const p = data.entity
     const b = p.getBlockFromViewDirection({"includeLiquidBlocks": true}).block
@@ -21,6 +20,7 @@ export function createBlockEntity(b, initialVelocity) {
     const bc = b.bottomCenter()
     const e = b.dimension.spawnEntity("viberater:block_entity", bc)
     e.setDynamicProperty("block_typeid", b.typeId)
+    e.setDynamicProperty("block_localizationKey", b.getItemStack()?.localizationKey)
     const perms = b.permutation.getAllStates()
     let bti = b.typeId
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
@@ -31,14 +31,20 @@ export function createBlockEntity(b, initialVelocity) {
             b.dimension.spawnItem(i, b.center())
         }
     }
+    if (bti == "minecraft:standing_banner" || bti == "minecraft:wall_banner") {
+        const gil = b.getItemStack().localizationKey
+        if (gil != "item.banner.black.name") {
+            const i = new ItemStack(gil.replace("item.banner.", "minecraft:").replace(".name", "_dye"))
+            b.dimension.spawnItem(i, b.center())
+        }
+    }
     const sign = b.getComponent("sign")
     if (sign) {
-        world.sendMessage(`has sign`)
         e.setDynamicProperty("block_sign_front", sign.getText("Front"))
         e.setDynamicProperty("block_sign_back", sign.getText("Back"))
     }
     try {
-        e.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${bti}`)
+        e.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${b.getItemStack()?.typeId}`)
     } catch { }
     if (b.typeId.includes("shulker_box")) {
         const cntr = b.getComponent("inventory")?.container
@@ -127,7 +133,6 @@ export function reduceBlockEntity(e) {
 
 /** @param {import('@minecraft/server').Entity} e @param {Record<string, string | number | boolean>} perms */
 function setBlockPermutation(e, perms, eloc = e.location, check = true) {
-    world.sendMessage(`${perms["head_piece_bit"]}`)
     world.sendMessage(`${eloc.x} ${eloc.y} ${eloc.z}`)
     const b = e.dimension.getBlock(eloc)
     if (isReplaceable(b)) {
