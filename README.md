@@ -9,12 +9,12 @@ Its still under development. Credit where credit is due.
 Here's what it does. This is probably going to be outdated by the time you read it.
 
 There is a very simple entity with the identifier "viberater:block_entity". I will refer to it as the block entity.
-It cannot rotate, and has bounciness and friction, and has 27 inventory slots
+It cannot rotate, and has bounciness and friction, and has 27 inventory slots.
 It is invisible, but has collision of slightly less than a block.
-When a block is put in its mainhand, it will display that block as it looks when held
+When a block is put in its mainhand, it will display that block as it looks when held.
 Some blocks will appear nearly distinguishable from their true block counterparts. Others look weird.
 By default, I have an "environment_sensor" on it that will detect when it is on the ground. You can change this.
-When it is on the ground, it will attempt to convert back into the stored block data from its dynamic properties and inventory
+When it is on the ground, it will attempt to convert back into the stored block data from its dynamic properties and inventory.
 
 In the code, you have two importable functions. createBlockEntity() and reduceBlockEntity()
 
@@ -25,7 +25,7 @@ There exists special cases for doors and beds. All custom blocks that are multib
 Once the entity is created, it will replace the block with air.
 
 reduceBlockEntity() accepts one input, the block entity. If it is not the block entity, it will do nothing.
-It will try to set the permutation of the block at the block entity's location. If it cannot for whatever reason, it will do nothing
+It will try to set the permutation of the block at the block entity's location. If it cannot for whatever reason, it will do nothing.
 There exists special placement for beds, doors, and shulker boxes.
 After, it disappears.
 
