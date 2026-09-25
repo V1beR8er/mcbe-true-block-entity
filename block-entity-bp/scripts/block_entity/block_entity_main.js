@@ -1,8 +1,8 @@
 import { world, BlockPermutation, ItemStack } from "@minecraft/server"
 
-const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "fertilize_area"]
+const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "water", "fertilize_area"]
 const replaceableBlacklist = ["minecraft:grass_block", "minecraft:moss_block"]
-const replaceableWhitelist = ["minecraft:deadbush", "minecraft:air", "minecraft:vine"]
+const replaceableWhitelist = ["minecraft:deadbush", "minecraft:lava", "minecraft:flowing_lava", "minecraft:air", "minecraft:vine"]
 
 /*world.afterEvents.entityHurt.subscribe( data => {
     world.sendMessage(`dmg ${data.damage}`)
@@ -11,7 +11,7 @@ const replaceableWhitelist = ["minecraft:deadbush", "minecraft:air", "minecraft:
 
 world.afterEvents.entityStartSneaking.subscribe(data => {
     const p = data.entity
-    const b = p.getBlockFromViewDirection().block
+    const b = p.getBlockFromViewDirection({"includeLiquidBlocks": true}).block
     createBlockEntity(b, { x: 0, y: 1, z: 0 })
 }, { "entityFilter": { "families": ["player"] } })*/
 
@@ -22,6 +22,7 @@ export function createBlockEntity(b, initialVelocity) {
     const e = b.dimension.spawnEntity("viberater:block_entity", bc)
     e.setDynamicProperty("block_type", b.typeId)
     const perms = b.permutation.getAllStates()
+    world.sendMessage(`perms ${perms}`)
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
     const sign = b.getComponent("sign")
     if (sign) {
