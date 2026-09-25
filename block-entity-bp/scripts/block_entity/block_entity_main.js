@@ -19,11 +19,7 @@ const breakableBlacklist = new Map([
     ["minecraft:trial_spawner", {withData: true}]
 ])
 
-/*world.afterEvents.entityHurt.subscribe( data => {
-    world.sendMessage(`dmg ${data.damage}`)
-})
-
-world.afterEvents.entityStartSneaking.subscribe(data => {
+/*world.afterEvents.entityStartSneaking.subscribe(data => {
     const p = data.entity
     const b = p.getBlockFromViewDirection({"includeLiquidBlocks": true}).block
     createBlockEntity(b, { x: 0, y: 1, z: 0 })
@@ -80,8 +76,8 @@ export function reduceBlockEntity(e) {
     if (!e?.isValid || !e?.dimension || e.typeId != "viberater:block_entity") return
     const v = e.getVelocity()
     if (Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2) > 0.005) return
-    const perms = JSON.parse(e.getDynamicProperty("block_permutations"))
     try {
+        const perms = JSON.parse(e.getDynamicProperty("block_permutations"))
         const hb = perms["head_piece_bit"]
         const ub = perms["upper_block_bit"]
         if (hb != undefined) {
@@ -129,7 +125,6 @@ export function reduceBlockEntity(e) {
     } catch (err) { console.warn(err) }
     const b = e.dimension.getBlock(e.location)
     if (e.getDynamicProperty('block_sign_front')) {
-        world.sendMessage(`do sign`)
         b.getComponent("sign").setText(e.getDynamicProperty("block_sign_front"), "Front")
         b.getComponent("sign").setText(e.getDynamicProperty("block_sign_back"), "Back")
     }
@@ -145,7 +140,6 @@ export function reduceBlockEntity(e) {
 
 /** @param {import('@minecraft/server').Entity} e @param {Record<string, string | number | boolean>} perms */
 function setBlockPermutation(e, perms, eloc = e.location, check = true) {
-    world.sendMessage(`${eloc.x} ${eloc.y} ${eloc.z}`)
     const b = e.dimension.getBlock(eloc)
     if (isReplaceable(b)) {
         e.dimension.setBlockPermutation(eloc, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
