@@ -4,6 +4,21 @@ const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "water", "ferti
 const replaceableBlacklist = ["minecraft:grass_block", "minecraft:moss_block"]
 const replaceableWhitelist = ["minecraft:deadbush", "minecraft:lava", "minecraft:flowing_lava", "minecraft:air", "minecraft:vine"]
 
+const breakableBlacklist = new Map([
+    ["minecraft:anvil", {withData: false}],
+    ["minecraft:bell", {withData: false}],
+    ["minecraft:decorated_pot", {withData: false}],
+    ["minecraft:command_block", {withData: true}],
+    ["minecraft:repeating_command_block", {withData: true}],
+    ["minecraft:chain_command_block", {withData: true}],
+    ["minecraft:standing_banner", {withData: false}],
+    ["minecraft:wall_banner", {withData: true}],
+    ["minecraft:beehive", {withData: true}],
+    ["minecraft:bee_nest", {withData: true}],
+    ["minecraft:mob_spawner", {withData: true}],
+    ["minecraft:trial_spawner", {withData: true}]
+])
+
 /*world.afterEvents.entityHurt.subscribe( data => {
     world.sendMessage(`dmg ${data.damage}`)
 })
@@ -17,24 +32,21 @@ world.afterEvents.entityStartSneaking.subscribe(data => {
 /**  @param {import('@minecraft/server').Block} b @param {{x: Number, y: Number, z: Number}} initialVelocity */
 export function createBlockEntity(b, initialVelocity) {
     if (!b || b?.typeId == "minecraft:air" || b.typeId.includes("arm_collision")) return
+    if (breakableBlacklist.has(b.typeId)) {
+        b.dimension.spawnItem(b.getItemStack(1, breakableBlacklist.get(b.typeId).withData), b.center())
+        b.setPermutation(BlockPermutation.resolve("minecraft:air"))
+        return
+    }
     const bc = b.bottomCenter()
     const e = b.dimension.spawnEntity("viberater:block_entity", bc)
     e.setDynamicProperty("block_typeid", b.typeId)
     e.setDynamicProperty("block_localizationKey", b.getItemStack()?.localizationKey)
     const perms = b.permutation.getAllStates()
-    let bti = b.typeId
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
-    if (bti == "minecraft:bed") {
+    if (b.typeId == "minecraft:bed") {
         const gil = b.getItemStack().localizationKey
         if (gil != "item.bed.red.name") {
             const i = new ItemStack(gil.replace("item.bed.", "minecraft:").replace(".name", "_dye"))
-            b.dimension.spawnItem(i, b.center())
-        }
-    }
-    if (bti == "minecraft:standing_banner" || bti == "minecraft:wall_banner") {
-        const gil = b.getItemStack().localizationKey
-        if (gil != "item.banner.black.name") {
-            const i = new ItemStack(gil.replace("item.banner.", "minecraft:").replace(".name", "_dye"))
             b.dimension.spawnItem(i, b.center())
         }
     }
