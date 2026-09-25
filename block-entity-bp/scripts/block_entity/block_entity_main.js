@@ -1,4 +1,4 @@
-import { world, BlockPermutation, ItemStack } from "@minecraft/server"
+import { world, BlockPermutation, ItemStack, EquipmentSlot, BlockType } from "@minecraft/server"
 
 const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "water", "fertilize_area"]
 const replaceableBlacklist = ["minecraft:grass_block", "minecraft:moss_block"]
@@ -20,10 +20,17 @@ export function createBlockEntity(b, initialVelocity) {
     if (!b || b?.typeId == "minecraft:air" || b.typeId.includes("arm_collision")) return
     const bc = b.bottomCenter()
     const e = b.dimension.spawnEntity("viberater:block_entity", bc)
-    e.setDynamicProperty("block_type", b.typeId)
+    e.setDynamicProperty("block_typeid", b.typeId)
     const perms = b.permutation.getAllStates()
-    world.sendMessage(`perms ${perms}`)
+    let bti = b.typeId
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
+    if (bti == "minecraft:bed") {
+        const gil = b.getItemStack().localizationKey
+        if (gil != "item.bed.red.name") {
+            const i = new ItemStack(gil.replace("item.bed.", "minecraft:").replace(".name", "_dye"))
+            b.dimension.spawnItem(i, b.center())
+        }
+    }
     const sign = b.getComponent("sign")
     if (sign) {
         world.sendMessage(`has sign`)
@@ -31,7 +38,7 @@ export function createBlockEntity(b, initialVelocity) {
         e.setDynamicProperty("block_sign_back", sign.getText("Back"))
     }
     try {
-        e.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${b.typeId}`)
+        e.runCommand(`replaceitem entity @s slot.weapon.mainhand 0 ${bti}`)
     } catch { }
     if (b.typeId.includes("shulker_box")) {
         const cntr = b.getComponent("inventory")?.container
@@ -77,7 +84,7 @@ export function reduceBlockEntity(e) {
             }, false)
             if (!nm1) {
                 e.dimension.setBlockPermutation(nm, BlockPermutation.resolve("minecraft:air"))
-                const is = new ItemStack(e.getDynamicProperty("block_type"))
+                const is = new ItemStack(e.getDynamicProperty("block_typeid"))
                 e.dimension.spawnItem(is, e.location)
             }
         } else if (ub != undefined) {
@@ -90,19 +97,18 @@ export function reduceBlockEntity(e) {
                 z: nm.z
             }, false)
             if (!nm1) {
-                world.sendMessage(`destroy`)
                 e.dimension.setBlockPermutation(nm, BlockPermutation.resolve("minecraft:air"))
-                const is = new ItemStack(e.getDynamicProperty("block_type"))
+                const is = new ItemStack(e.getDynamicProperty("block_typeid"))
                 e.dimension.spawnItem(is, e.location)
             }
         } else {
             const nm = setBlockPermutation(e, perms)
             if (!nm) {
-                const is = new ItemStack(e.getDynamicProperty("block_type"))
+                const is = new ItemStack(e.getDynamicProperty("block_typeid"))
                 e.dimension.spawnItem(is, e.location)
             }
         }
-    } catch { }
+    } catch (err) { console.warn(err) }
     const b = e.dimension.getBlock(e.location)
     if (e.getDynamicProperty('block_sign_front')) {
         world.sendMessage(`do sign`)
@@ -125,38 +131,38 @@ function setBlockPermutation(e, perms, eloc = e.location, check = true) {
     world.sendMessage(`${eloc.x} ${eloc.y} ${eloc.z}`)
     const b = e.dimension.getBlock(eloc)
     if (isReplaceable(b)) {
-        e.dimension.setBlockPermutation(eloc, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        e.dimension.setBlockPermutation(eloc, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return eloc
     }
     if (!check) return
     let bb = b.below()
     if (isReplaceable(bb)) {
-        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return bb.location
     }
     bb = b.above()
     if (isReplaceable(bb)) {
-        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return bb.location
     }
     bb = b.north()
     if (isReplaceable(bb)) {
-        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return bb.location
     }
     bb = b.east()
     if (isReplaceable(bb)) {
-        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return bb.location
     }
     bb = b.south()
     if (isReplaceable(bb)) {
-        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return bb.location
     }
     bb = b.west()
     if (isReplaceable(bb)) {
-        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_type"), perms))
+        bb.dimension.setBlockPermutation(bb.location, BlockPermutation.resolve(e.getDynamicProperty("block_typeid"), perms))
         return bb.location
     }
     return
