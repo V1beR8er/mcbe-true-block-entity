@@ -1,4 +1,4 @@
-import { world, BlockPermutation, ItemStack, EquipmentSlot, BlockType } from "@minecraft/server"
+import { world, BlockPermutation, ItemStack, EquipmentSlot, BlockType, BlockVolume } from "@minecraft/server"
 
 const replaceableBlockTags = ["snow", "minecraft:crop", "plant", "water", "fertilize_area"]
 const replaceableBlacklist = ["minecraft:grass_block", "minecraft:moss_block"]
@@ -26,7 +26,7 @@ const breakableBlacklist = new Map([
 }, { "entityFilter": { "families": ["player"] } })*/
 
 /**  @param {import('@minecraft/server').Block} b @param {{x: Number, y: Number, z: Number}} initialVelocity */
-export function createBlockEntity(b, initialVelocity) {
+export function createBlockEntity(b, initialVelocity, damage) {
     if (!b || b?.typeId == "minecraft:air" || b.typeId.includes("arm_collision")) return
     if (breakableBlacklist.has(b.typeId)) {
         b.dimension.spawnItem(b.getItemStack(1, breakableBlacklist.get(b.typeId).withData), b.center())
@@ -36,6 +36,7 @@ export function createBlockEntity(b, initialVelocity) {
     const bc = b.bottomCenter()
     const e = b.dimension.spawnEntity("viberater:block_entity", bc)
     e.setDynamicProperty("block_typeid", b.typeId)
+    e.setDynamicProperty("block_damage", damage)
     e.setDynamicProperty("block_localizationKey", b.getItemStack()?.localizationKey)
     const perms = b.permutation.getAllStates()
     e.setDynamicProperty("block_permutations", JSON.stringify(perms))
@@ -122,7 +123,7 @@ export function reduceBlockEntity(e) {
                 e.dimension.spawnItem(is, e.location)
             }
         }
-    } catch (err) { console.warn(err) }
+    } catch (err) {  }
     const b = e.dimension.getBlock(e.location)
     if (e.getDynamicProperty('block_sign_front')) {
         b.getComponent("sign").setText(e.getDynamicProperty("block_sign_front"), "Front")
@@ -191,7 +192,40 @@ function isReplaceable(b) {
 world.afterEvents.dataDrivenEntityTrigger.subscribe(data => {
     const e = data.entity
     const m = data.eventId
+    if (m == "viberater:block_entity_expire") {
+        const bvb = new BlockVolume( 
+            {
+                x: e.location.x - 1,
+                y: e.location.y - 1,
+                z: e.location.z - 1
+            },
+            {
+                x: e.location.x + 1,
+                y: e.location.y + 1,
+                z: e.location.z + 1
+            }
+        )
+        const blocks = e.dimension.getBlocks(bvb, {"includeTypes": ["minecraft:air"]}).getBlockLocationIterator()
+        for (const loc of blocks) {
+            const b = e.dimension.getBlock(loc)
+            if (!b) return
+            e.teleport(b.center(), {"keepVelocity": false})
+            reduceBlockEntity(e)
+            break
+        }
+    }
     if (m == "viberater:reduce_block_entity") {
-        reduceBlockEntity(e)
+        try {
+            reduceBlockEntity(e)
+        } catch {
+            e.triggerEvent("instant_despawn")
+        }
     }
 }, { "entityTypes": ["viberater:block_entity"] })
+
+world.beforeEvents.entityHurt.subscribe( data => {
+    const proj = data.damageSource.damagingProjectile
+    if (!proj?.isValid || proj.typeId != "viberater:block_entity") return
+    const dmg = proj.getDynamicProperty("block_damage")
+    data.damage *= dmg
+})
